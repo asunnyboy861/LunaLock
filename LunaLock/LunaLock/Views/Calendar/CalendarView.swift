@@ -3,6 +3,8 @@ import SwiftUI
 struct CalendarView: View {
     @StateObject private var viewModel = CalendarViewModel()
     @State private var displayedMonth = Date()
+    @State private var selectedDate: Date?
+    @State private var showDayDetail = false
 
     private var monthFormatter: DateFormatter {
         let f = DateFormatter()
@@ -19,6 +21,11 @@ struct CalendarView: View {
             }
             .navigationTitle("Calendar")
             .onAppear { viewModel.load() }
+            .sheet(isPresented: $showDayDetail) {
+                if let date = selectedDate {
+                    DayDetailView(date: date)
+                }
+            }
         }
     }
 
@@ -71,19 +78,24 @@ struct CalendarView: View {
         let isPredicted = viewModel.isPredictedDay(date)
         let isToday = viewModel.isToday(date)
 
-        return VStack(spacing: 2) {
-            Text("\(day)")
-                .font(.caption)
-                .fontWeight(isToday ? .bold : .regular)
-                .foregroundStyle(isToday ? .white : .primary)
+        return Button {
+            selectedDate = date
+            showDayDetail = true
+        } label: {
+            VStack(spacing: 2) {
+                Text("\(day)")
+                    .font(.caption)
+                    .fontWeight(isToday ? .bold : .regular)
+                    .foregroundStyle(isToday ? .white : .primary)
 
-            Circle()
-                .fill(isPeriod ? Color(hex: "E91E63") : (isPredicted ? Color(hex: "E91E63").opacity(0.3) : Color.clear))
-                .frame(width: 6, height: 6)
+                Circle()
+                    .fill(isPeriod ? Color(hex: "E91E63") : (isPredicted ? Color(hex: "E91E63").opacity(0.3) : Color.clear))
+                    .frame(width: 6, height: 6)
+            }
+            .frame(height: 40)
+            .background(isToday ? Color(hex: "7C4DFF") : Color.clear)
+            .clipShape(Circle())
         }
-        .frame(height: 40)
-        .background(isToday ? Color(hex: "7C4DFF") : Color.clear)
-        .clipShape(Circle())
     }
 
     private func daysInMonth() -> [Date] {

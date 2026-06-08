@@ -91,10 +91,8 @@ class SecurityManager: ObservableObject {
                 }
             }
         case .pin:
-            isLocked = false
-            lastUnlockTime = Date()
-            scheduleAutoLock()
-            completion(true)
+            // PIN mode: don't auto-unlock here, let LockScreenView handle PIN input
+            completion(false)
         }
     }
 

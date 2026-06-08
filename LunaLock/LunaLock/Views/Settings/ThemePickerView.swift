@@ -3,6 +3,7 @@ import SwiftUI
 struct ThemePickerView: View {
     @StateObject private var themeManager = ThemeManager.shared
     @StateObject private var purchaseManager = PurchaseManager.shared
+    @State private var showPaywall = false
 
     var body: some View {
         Group {
@@ -13,6 +14,9 @@ struct ThemePickerView: View {
             }
         }
         .navigationTitle("Themes")
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
     }
 
     private var proContent: some View {
@@ -51,6 +55,16 @@ struct ThemePickerView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
+            Button(action: { showPaywall = true }) {
+                Text("Upgrade to Pro")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color(hex: "7C4DFF"))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .padding(.horizontal, 32)
             Spacer()
         }
     }

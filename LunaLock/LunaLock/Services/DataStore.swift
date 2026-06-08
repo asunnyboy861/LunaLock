@@ -145,6 +145,7 @@ class DataStore: ObservableObject {
         if let encoded = try? JSONEncoder().encode(periodStartDates) {
             defaults.set(encoded, forKey: periodsKey)
         }
+        objectWillChange.send()
     }
 
     private func loadRecords() {

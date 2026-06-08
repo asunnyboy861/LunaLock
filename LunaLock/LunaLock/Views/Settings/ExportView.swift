@@ -5,6 +5,7 @@ struct ExportView: View {
     @State private var showShareSheet = false
     @State private var exportFileURL: URL?
     @State private var exportFormat: ExportFormat = .pdf
+    @State private var showPaywall = false
 
     enum ExportFormat {
         case pdf, json
@@ -26,6 +27,9 @@ struct ExportView: View {
                 if let url = exportFileURL {
                     ShareSheet(activityItems: [url])
                 }
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
             }
         }
     }
@@ -69,6 +73,16 @@ struct ExportView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
+            Button(action: { showPaywall = true }) {
+                Text("Upgrade to Pro")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color(hex: "7C4DFF"))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .padding(.horizontal, 32)
             Spacer()
         }
     }

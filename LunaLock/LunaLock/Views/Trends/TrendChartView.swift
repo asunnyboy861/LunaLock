@@ -4,6 +4,7 @@ import Charts
 struct TrendChartView: View {
     @StateObject private var viewModel = TrendViewModel()
     @StateObject private var purchaseManager = PurchaseManager.shared
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -16,6 +17,9 @@ struct TrendChartView: View {
             }
             .navigationTitle("Trends")
             .onAppear { viewModel.load() }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
+            }
         }
     }
 
@@ -139,7 +143,7 @@ struct TrendChartView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
-            Button(action: {}) {
+            Button(action: { showPaywall = true }) {
                 Text("Upgrade to Pro")
                     .font(.headline)
                     .foregroundStyle(.white)

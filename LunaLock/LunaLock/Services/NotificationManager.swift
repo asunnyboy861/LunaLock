@@ -44,8 +44,21 @@ class NotificationManager: ObservableObject {
     }
 
     func setReminderEnabled(_ enabled: Bool) {
-        isReminderEnabled = enabled
-        defaults.set(enabled, forKey: reminderEnabledKey)
+        if enabled {
+            requestPermission { granted in
+                if granted {
+                    self.isReminderEnabled = true
+                    self.defaults.set(true, forKey: self.reminderEnabledKey)
+                } else {
+                    self.isReminderEnabled = false
+                    self.defaults.set(false, forKey: self.reminderEnabledKey)
+                }
+            }
+        } else {
+            isReminderEnabled = false
+            defaults.set(false, forKey: reminderEnabledKey)
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        }
     }
 
     func setReminderDays(_ days: Int) {
