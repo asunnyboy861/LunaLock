@@ -5,7 +5,7 @@ import LocalAuthentication
 class SecurityManager: ObservableObject {
     static let shared = SecurityManager()
 
-    @Published var isLocked = true
+    @Published var isLocked = false
     @Published var isSecurityEnabled: Bool
     @Published var lockMethod: LockMethod
     @Published var autoLockDuration: AutoLockDuration
@@ -52,6 +52,7 @@ class SecurityManager: ObservableObject {
         lockMethod = LockMethod(rawValue: methodRaw) ?? .faceID
         let durationRaw = defaults.double(forKey: autoLockKey)
         autoLockDuration = AutoLockDuration(rawValue: durationRaw) ?? .immediately
+        // Only start locked if security is actually enabled
         isLocked = isSecurityEnabled
     }
 

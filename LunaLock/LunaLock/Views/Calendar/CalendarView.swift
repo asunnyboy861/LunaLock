@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CalendarView: View {
     @StateObject private var viewModel = CalendarViewModel()
+    @StateObject private var dataStore = DataStore.shared
     @State private var displayedMonth = Date()
     @State private var selectedDate: Date?
     @State private var showDayDetail = false
@@ -21,6 +22,9 @@ struct CalendarView: View {
             }
             .navigationTitle("Calendar")
             .onAppear { viewModel.load() }
+            .onChange(of: dataStore.periodStartDates) { _, _ in
+                viewModel.load()
+            }
             .sheet(isPresented: $showDayDetail) {
                 if let date = selectedDate {
                     DayDetailView(date: date)

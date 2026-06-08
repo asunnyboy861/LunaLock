@@ -12,10 +12,33 @@ class PurchaseManager: ObservableObject {
 
     private let proProductID = "com.zzoutuo.LunaLock.pro"
     private let isProKey = "lunalock.ispro"
+    private var transactionListener: Task<Void, Never>?
 
     init() {
         isPro = UserDefaults.standard.bool(forKey: isProKey)
+        transactionListener = listenForTransactions()
         Task { await loadProduct() }
+    }
+
+    deinit {
+        transactionListener?.cancel()
+    }
+
+    private func listenForTransactions() -> Task<Void, Never> {
+        Task.detached { [weak self] in
+            for await result in Transaction.updates {
+                guard let self else { return }
+                if case .verified(let transaction) = result {
+                    if transaction.productID == self.proProductID {
+                        await MainActor.run {
+                            self.isPro = true
+                            UserDefaults.standard.set(true, forKey: self.isProKey)
+                        }
+                    }
+                    await transaction.finish()
+                }
+            }
+        }
     }
 
     func loadProduct() async {

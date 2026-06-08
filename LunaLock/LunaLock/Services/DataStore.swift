@@ -146,6 +146,17 @@ class DataStore: ObservableObject {
             defaults.set(encoded, forKey: periodsKey)
         }
         objectWillChange.send()
+        scheduleReminderIfNeeded()
+    }
+
+    private func scheduleReminderIfNeeded() {
+        let notificationManager = NotificationManager.shared
+        guard notificationManager.isReminderEnabled else { return }
+        guard !periodStartDates.isEmpty else { return }
+        let predictor = CyclePredictor()
+        if let prediction = predictor.predict(from: self) {
+            notificationManager.scheduleReminder(nextPeriodDate: prediction.nextPeriodDate)
+        }
     }
 
     private func loadRecords() {

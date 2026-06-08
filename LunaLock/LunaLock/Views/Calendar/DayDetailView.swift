@@ -145,12 +145,12 @@ struct DayDetailView: View {
     private func saveLog() {
         if isPeriodStart {
             dataStore.logPeriodStart(date: date, flowLevel: selectedFlow ?? .medium)
+        } else if let flow = selectedFlow {
+            // Only log flow separately if not already logged via periodStart
+            dataStore.logFlow(date: date, flow: flow)
         }
         if isPeriodEnd {
             dataStore.logPeriodEnd(date: date)
-        }
-        if let flow = selectedFlow {
-            dataStore.logFlow(date: date, flow: flow)
         }
         for symptom in selectedSymptoms {
             dataStore.logSymptom(date: date, symptom: symptom)

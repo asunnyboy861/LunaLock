@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @StateObject private var viewModel = DashboardViewModel()
+    @StateObject private var dataStore = DataStore.shared
     @StateObject private var security = SecurityManager.shared
     @State private var showQuickLog = false
 
@@ -28,6 +29,9 @@ struct DashboardView: View {
                 QuickLogView()
             }
             .onAppear { viewModel.load() }
+            .onChange(of: dataStore.periodStartDates) { _, _ in
+                viewModel.load()
+            }
             .refreshable { viewModel.load() }
         }
     }

@@ -165,10 +165,8 @@ struct SettingsView: View {
                 showDeleteConfirmation = true
             }
 
-            if !purchaseManager.isPro {
-                Button("Restore Purchases") {
-                    Task { await purchaseManager.restorePurchases() }
-                }
+            Button("Restore Purchases") {
+                Task { await purchaseManager.restorePurchases() }
             }
         }
     }
